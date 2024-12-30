@@ -3,7 +3,7 @@ package thread.util;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
-
+import java.util.concurrent.BlockingQueue;
 class Task implements Runnable
 {
 	int i=0;
@@ -19,11 +19,11 @@ class Task implements Runnable
 
 class WorkerThread implements Runnable
 {
-	ArrayBlockingQueue<Runnable> queue = null;
+	BlockingQueue<Runnable> queue = null;
 	private boolean stop = false;
 	private Thread thread = null;
 	
-	public WorkerThread(ArrayBlockingQueue<Runnable> queue)
+	public WorkerThread(BlockingQueue<Runnable> queue)
 	{
 		this.queue = queue;
 	}
@@ -35,12 +35,12 @@ class WorkerThread implements Runnable
 		{
 			try
 			{
-				Runnable task = (Runnable) queue.poll();
+				Runnable task = queue.take();
 				task.run();
 			}
-			catch(Exception e)
+			catch(InterruptedException  e)
 			{
-				//Log the exception.
+				 this.thread.interrupt();
 			}
 		}
 	}
@@ -53,7 +53,7 @@ class WorkerThread implements Runnable
 }
 public class ThreadPool 
 {
-	ArrayBlockingQueue<Runnable> queue = null;
+	BlockingQueue<Runnable> queue = null;
 	List<WorkerThread> workerThreads = new ArrayList<WorkerThread>();
 	public ThreadPool(int poolSize, int numThreads)
 	{

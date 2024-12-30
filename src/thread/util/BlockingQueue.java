@@ -19,13 +19,8 @@ public class BlockingQueue
     	{
     		this.wait();
     	}
-    	
     	queue.add(object);
-    	
-    	if (queue.size() == 1)
-    	{
-    		this.notifyAll();
-    	}
+    	this.notifyAll();
     }
     
     public synchronized Object dequeue() throws InterruptedException
@@ -34,12 +29,7 @@ public class BlockingQueue
     	{
     		this.wait();
     	}
-    	
-    	if (queue.size() == capacity)
-    	{
-    		this.notifyAll();
-    	}
-    	
+    	this.notifyAll();
     	Object obj = queue.remove(0);
     	return obj;
     }
@@ -108,13 +98,9 @@ public class BlockingQueue
     	Thread t2 = new ConsumerThread(2,queue);
     	Thread t3 = new ProducerThread(3, queue);
     	Thread t4 = new ConsumerThread(4,queue);
-    	//Thread t5 = new ProducerThread(5, queue);
-    	//Thread t6 = new ConsumerThread(6,queue);
     	t1.start();
     	t2.start();
     	t3.start();
     	t4.start();
-    	//t5.start();
-    	//t6.start();
     }
 }
